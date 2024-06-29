@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agri Chatbot</title>
+    <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="This is an Agriculture chatbot that helps farmers to make the right decisions." />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            padding-top: 50px;
+        }
+        .chat-container {
+            height: 400px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .chat-message {
+            margin: 10px 0;
+        }
+        .chat-message.user {
+            text-align: right;
+        }
+        .chat-message.bot {
+            text-align: left;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Krissi Help Chatbot</h1>
+        <p class="text-center">Disclaimer: Please have patience, this might take some time</p>
+        <div class="chat-container" id="chat-container"></div>
+        <div class="row">
+            <div class="col-xs-12">
+                <input type="text" class="form-control" id="user-input" placeholder="Type your message...">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <button class="btn btn-primary btn-block" id="send-btn">Send</button>
+            </div>
+        </div>
+        <footer class="footer">
+            <h2> Made by AI Engr. Faisal Ahmed and AI&Robotics Engr. H.M.Mehedi Hasan (Badhon)
+                <a href="https://www.linkedin.com/in/mohammed97ashraf" target="_blank"><i class="bi bi-linkedin"></i></a>
+                <a href="https://github.com/mohammed97ashraf" target="_blank"><i class="bi bi-github"></i></a>
+            </h2>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#send-btn').on('click', function() {
+                sendMessage();
+            });
+
+            $('#user-input').on('keypress', function(e) {
+                if (e.which === 13) {
+                    sendMessage();
+                }
+            });
+
+            function sendMessage() {
+                var userInput = $('#user-input').val();
+                if (userInput.trim() !== '') {
+                    $('#user-input').val('');
+                    $('#chat-container').append('<div class="chat-message user alert alert-info">' + userInput + '</div>');
+                    scrollToBottom();
+
+                    $('#chat-container').append('<div class="chat-message bot alert alert-success">Bot is typing...</div>');
+                    scrollToBottom();
+
+                    $.post('/chat', {text: userInput}, function(response) {
+                        $('#chat-container .bot:last').remove();
+                        $('#chat-container').append('<div class="chat-message bot alert alert-success">' + response.text + '</div>');
+                        $('#chat-container').append('<div class="chat-message bot alert alert-success"><audio controls src="' + response.voice + '"></audio></div>');
+                        scrollToBottom();
+                    });
+                }
+            }
+
+            function scrollToBottom() {
+                $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
+            }
+        });
+    </script>
+</body>
+</html>
